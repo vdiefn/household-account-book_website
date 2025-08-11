@@ -1,0 +1,32 @@
+#app {
+    width: 100dvw;
+    height: 100dvh;
+    position: relative;
+    min-width: 1024px;
+}
+
+::-webkit-scrollbar {
+    position: fixed;
+    width: 8px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+}
+
+::-webkit-scrollbar-track-piece {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background-color: #ccc;
+}
+
+
+// a標籤不要變色
+.no-link {
+    color: inherit;
+}

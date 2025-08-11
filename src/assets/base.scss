@@ -1,0 +1,96 @@
+/* base.scss */
+
+:root {
+  --color-text: #1a1a1a;
+  --color-background: #f7f7f7;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition: color 0.5s,
+              background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter,
+               -apple-system,
+               BlinkMacSystemFont,
+               "Segoe UI",
+               Roboto,
+               Oxygen,
+               Ubuntu,
+               Cantarell,
+               "Fira Sans",
+               "Droid Sans",
+               "Helvetica Neue",
+               sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+
+h1 {
+  font-size: 2rem; /* 32px */
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+h5 {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+h6 {
+  font-size: 0.875rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+ul,
+ol {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
