@@ -19,6 +19,18 @@ onMounted(() => {
 });
 </script>
 <template>
-  <h5>Home</h5>
+  <div class="container">
+    <h5>Home</h5>
+  </div>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.container {
+  border: 1px solid white;
+  height: 90%;
+  width: 98%;
+  border-radius: 15px;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+</style>
