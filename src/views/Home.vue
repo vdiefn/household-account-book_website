@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
+import { DefaultContainer } from "@/components";
 import api from "@/utils/api";
 
 const data = ref({});
@@ -19,18 +20,10 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="container">
-    <h5>Home</h5>
-  </div>
+  <DefaultContainer>
+    <template #header>
+      <h5>Home</h5>
+    </template>
+  </DefaultContainer>
 </template>
-<style lang="scss" scoped>
-.container {
-  border: 1px solid white;
-  height: 90%;
-  width: 98%;
-  border-radius: 15px;
-  padding: 1rem;
-  background-color: white;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-}
-</style>
+<style lang="scss" scoped></style>
