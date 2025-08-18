@@ -11,6 +11,11 @@ declare module 'vue' {
     Aside: typeof import('./src/components/Aside.vue')['default']
     DefaultContainer: typeof import('./src/components/DefaultContainer.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElEmnu: typeof import('element-plus/es')['ElEmnu']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElMenu: typeof import('element-plus/es')['ElMenu']
+    ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
