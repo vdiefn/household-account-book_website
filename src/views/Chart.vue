@@ -5,7 +5,7 @@ import { DefaultContainer } from "@/components";
 <template>
   <DefaultContainer>
     <template #header>
-      <h5>Chart</h5>
+      <h4>Chart</h4>
     </template>
   </DefaultContainer>
 </template>

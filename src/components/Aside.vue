@@ -11,7 +11,6 @@ const handleSelect = (name: string) => {
 </script>
 <template>
   <div class="aside-container">
-    <h5>Aside</h5>
     <el-menu @select="handleSelect">
       <el-menu-item v-for="item in sidebar" :key="item.name" :index="item.name">
         <div class="menu-item-wrapper">
@@ -28,11 +27,10 @@ const handleSelect = (name: string) => {
   background-color: white;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
-  padding: 1rem;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 
   .el-menu {
-    border-right: none;
+    margin-top: 1.5rem;
 
     .el-menu-item {
       display: flex;

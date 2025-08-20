@@ -9,11 +9,15 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 /* import icons and add them to the Library */
-import { faChartLine, faTableList } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChartLine,
+  faTableList,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { faHouse } from "@fortawesome/free-regular-svg-icons";
 import {} from "@fortawesome/free-brands-svg-icons";
 
-library.add(faHouse, faChartLine, faTableList);
+library.add(faHouse, faChartLine, faTableList, faMagnifyingGlass);
 
 const app = createApp(App);
 
