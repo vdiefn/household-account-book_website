@@ -153,7 +153,7 @@ onMounted(() => {
       </div>
     </template>
   </DefaultContainer>
-  <CreateOrEditRecord ref="createOrEditRecordRef" />
+  <CreateOrEditRecord ref="createOrEditRecordRef" @form-update="getData" />
 </template>
 <style lang="scss" scoped>
 .header-action {
