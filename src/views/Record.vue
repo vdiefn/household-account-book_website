@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { DefaultContainer } from "@/components";
-import { ref, onMounted } from "vue";
+import { DefaultContainer, CreateOrEditRecord } from "@/components";
+import { ref, onMounted, useTemplateRef } from "vue";
 import api from "@/utils/api";
 import type { Record, RecordQuery } from "@/types/record";
 
@@ -13,10 +13,13 @@ const selectItems = ref<string[]>([]);
 const selectType = ref<SelectType>("%");
 const selectDate = ref<[string, string] | []>([]);
 const titleList = ref<string[]>([]);
+const loading = ref(false);
+const createOrEditRecordRef = useTemplateRef("createOrEditRecordRef");
 
 const getData = async (): Promise<void> => {
   const params = {} as RecordQuery;
   let typeList: string[] = [];
+  loading.value = true;
 
   if (selectType.value) {
     if (selectType.value === "%") {
@@ -52,6 +55,8 @@ const getData = async (): Promise<void> => {
     data.value = res.data.records as Record[];
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -62,6 +67,10 @@ const getTitle = async (): Promise<void> => {
   } catch (err) {
     console.error(err);
   }
+};
+
+const handleCreateRecord = () => {
+  createOrEditRecordRef.value?.open();
 };
 
 const handleCurrentChange = () => {};
@@ -97,8 +106,8 @@ onMounted(() => {
             class="date-picker"
             type="daterange"
             range-separator="To"
-            start-placeholder="Start date"
-            end-placeholder="End date"
+            start-placeholder="起始日"
+            end-placeholder="結束日"
             format="YYYY/MM/DD"
             value-format="YYYY-MM-DD"
           />
@@ -109,11 +118,11 @@ onMounted(() => {
           </el-button>
         </div>
         <div class="right-action">
-          <el-button type="primary">新增</el-button>
+          <el-button type="primary" @click="handleCreateRecord">新增</el-button>
         </div>
       </div>
     </template>
-    <el-table :data="data" stripe>
+    <el-table :data="data" stripe v-loading="loading">
       <el-table-column type="selection" />
       <el-table-column prop="date" label="建立日期">
         <template #default="{ row }">
@@ -144,6 +153,7 @@ onMounted(() => {
       </div>
     </template>
   </DefaultContainer>
+  <CreateOrEditRecord ref="createOrEditRecordRef" />
 </template>
 <style lang="scss" scoped>
 .header-action {
