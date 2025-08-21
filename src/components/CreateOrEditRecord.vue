@@ -2,27 +2,62 @@
 import { ref, reactive } from "vue";
 import api from "@/utils/api";
 import { ElMessage } from "element-plus";
+import type { Category } from "@/types/category";
+import type { Record } from "@/types/record";
+
+type OpenMode =
+  | {
+      type: "create";
+    }
+  | {
+      type: "edit";
+      data: Record;
+    };
+
+const props = defineProps<{
+  categoryList: Category[];
+}>();
 
 const dialogVisible = ref(false);
+const currentMode = ref<"create" | "edit">("create");
 const form = reactive({
-  title: "",
-  amount: "",
+  name: "",
+  category: "",
+  amount: 1,
   type: "",
   date: "",
   note: "",
+  _id: "",
 });
 const emit = defineEmits<{ (e: "form-update"): void }>();
 
-const open = () => {
-  Object.assign(form, { title: "", amount: "", type: "", date: "", note: "" });
+const open = (mode: OpenMode) => {
+  Object.assign(form, {
+    name: "",
+    amount: 1,
+    type: "",
+    date: "",
+    note: "",
+    category: "",
+  });
+  if (mode.type === "create") {
+    currentMode.value = "create";
+  } else if (mode.type === "edit") {
+    currentMode.value = "edit";
+    Object.assign(form, mode.data);
+  }
+
   dialogVisible.value = true;
 };
 
 const confirm = async (): Promise<void> => {
+  const method = currentMode.value === "create" ? "post" : "put";
+  const url =
+    currentMode.value === "create" ? "/records" : `/records/${form._id}`;
   try {
-    const res = await api.post("/record", form);
-    console.log(res);
-    if (res.status === 201) {
+    const res = await api[method](url, form);
+
+    if (res.status === 200) {
       ElMessage({
         message: res.data.message,
         type: "success",
@@ -31,7 +66,10 @@ const confirm = async (): Promise<void> => {
       dialogVisible.value = false;
     } else {
       ElMessage({
-        message: res.data?.message || "新增失敗",
+        message:
+          res.data?.message || currentMode.value === "create"
+            ? "新增失敗"
+            : "修改失敗",
         type: "error",
       });
     }
@@ -45,13 +83,13 @@ defineExpose({ open });
 <template>
   <el-dialog
     v-model="dialogVisible"
-    title="新增一筆紀錄"
+    :title="currentMode === 'create' ? '新增資料' : '修改資料'"
     width="500"
     align-center
   >
     <el-form :model="form" label-width="auto" style="max-width: 600px">
       <el-form-item label="名稱">
-        <el-input v-model="form.title" />
+        <el-input v-model="form.name" />
       </el-form-item>
       <el-form-item label="支出/收入">
         <el-select v-model="form.type" placeholder="please select your zone">
@@ -68,6 +106,16 @@ defineExpose({ open });
           format="YYYY/MM/DD"
           value-format="YYYY-MM-DD"
         />
+      </el-form-item>
+      <el-form-item label="分類">
+        <el-select v-model="form.category" placeholder="選擇Category名稱">
+          <el-option
+            v-for="item in props.categoryList"
+            :key="item._id"
+            :value="item._id"
+            :label="item.name"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="金額">
         <el-input-number v-model="form.amount" :min="1" />

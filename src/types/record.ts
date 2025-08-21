@@ -1,9 +1,11 @@
 export interface Record {
+  _id?: string;
   amount: number;
   createdAt: string;
   note: string;
-  title: string;
+  name: string;
   type: "expense" | "income";
+  category: string;
   updatedAt: string;
 }
 
@@ -12,4 +14,5 @@ export interface RecordQuery {
   startDate?: string;
   endDate?: string;
   selectItems?: string[];
+  selectCategories?: string[];
 }
