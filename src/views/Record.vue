@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DefaultContainer, CreateOrEditRecord } from "@/components";
+import { DefaultContainer, CreateOrEditRecord, Card } from "@/components";
 import { ref, onMounted, useTemplateRef, computed } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import api from "@/utils/api";
@@ -32,6 +32,22 @@ const filterData = computed(() => {
       item.name.toLowerCase().includes(keyword.value.toLowerCase())
     );
   });
+});
+
+const expenseAmount = computed(() => {
+  return filterData.value
+    .filter((item) => item.type === "expense")
+    .reduce((a, c) => (a += c.amount), 0);
+});
+
+const incomeAmount = computed(() => {
+  return filterData.value
+    .filter((item) => item.type === "income")
+    .reduce((a, c) => (a += c.amount), 0);
+});
+
+const balance = computed(() => {
+  return incomeAmount.value - expenseAmount.value;
 });
 
 const getData = async (): Promise<void> => {
@@ -184,6 +200,21 @@ onMounted(() => {
         </div>
       </div>
     </template>
+    <div class="amount-wrapper">
+      <Card :title="'支出'" :amount="expenseAmount" />
+      <el-card shadow="never">
+        <div class="info-wrapper" style="">
+          <span>{{ "結餘" }}</span>
+          <template v-if="balance > 0">
+            <h2 style="color: green">{{ balance }}</h2>
+          </template>
+          <template v-else>
+            <h2 style="color: red">{{ balance }}</h2>
+          </template>
+        </div>
+      </el-card>
+      <Card :title="'收入'" :amount="incomeAmount" />
+    </div>
     <el-table :data="filterData" stripe v-loading="loading">
       <el-table-column type="selection" />
       <el-table-column prop="date" label="建立日期">
@@ -278,6 +309,27 @@ onMounted(() => {
 
   .right-action {
     justify-content: flex-end;
+  }
+}
+.amount-wrapper {
+  border-radius: 5px;
+  width: 100%;
+  margin: 1rem auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .el-card {
+    :deep(.el-card__body) {
+      padding: 5px 10px;
+    }
+
+    .info-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 250px;
+    }
   }
 }
 </style>
