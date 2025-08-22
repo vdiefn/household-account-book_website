@@ -8,15 +8,13 @@ import "dayjs/locale/zh-tw";
 import type { Record, RecordQuery } from "@/types/record";
 import type { Category } from "@/types/category";
 
-type SelectType = "%" | "income" | "expense";
-
 const data = ref<Record[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD");
 const endOfMonth = dayjs().endOf("month").format("YYYY-MM-DD");
 const selectCategories = ref<string[]>([]);
-const selectType = ref<SelectType>("%");
+const selectType = ref<string[]>(["income", "expense"]);
 const selectDate = ref<[string, string] | []>([startOfMonth, endOfMonth]);
 const categoryList = ref<Category[]>([]);
 const loading = ref(false);
@@ -52,16 +50,13 @@ const balance = computed(() => {
 
 const getData = async (): Promise<void> => {
   const params = {} as RecordQuery;
-  let typeList: string[] = [];
   loading.value = true;
 
   if (selectType.value) {
-    if (selectType.value === "%") {
-      typeList = ["expense", "income"];
-    } else {
-      typeList = [selectType.value];
-    }
-    params.selectType = typeList;
+    const selected = Array.isArray(selectType.value)
+      ? selectType.value
+      : [selectType.value];
+    params.selectType = selected;
   }
 
   if (selectDate.value[0]) {
@@ -162,8 +157,7 @@ onMounted(() => {
       <h4>Record</h4>
       <div class="header-action">
         <div class="left-action">
-          <el-select v-model="selectType" placeholder="選擇支出/收入">
-            <el-option label="全部" value="%" />
+          <el-select v-model="selectType" multiple placeholder="選擇支出/收入">
             <el-option label="收入" value="income" />
             <el-option label="支出" value="expense" />
           </el-select>

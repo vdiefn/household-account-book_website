@@ -1,3 +1,5 @@
+import type { Category } from "./category";
+
 export interface Record {
   _id?: string;
   amount: number;
@@ -5,7 +7,7 @@ export interface Record {
   note: string;
   name: string;
   type: "expense" | "income";
-  category: string;
+  category: Category;
   updatedAt: string;
 }
 
