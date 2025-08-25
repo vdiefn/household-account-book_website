@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from "vue";
+import { ElDialog } from "element-plus";
 import { DefaultContainer } from "@/components";
 import api from "@/utils/api";
-import dayjs from "dayjs";
-import "dayjs/locale/zh-tw";
+import { formatDate, getStartOfMonth, getEndOfMonth } from "@/utils/dayjs";
 import * as echarts from "echarts/core";
 import { PieChart } from "echarts/charts";
 import {
@@ -19,6 +19,7 @@ import type { Category } from "@/types/category";
 import type { ComputedRef } from "vue";
 import type { PieSeriesOption } from "echarts/charts";
 import type { ComposeOption } from "echarts/core";
+import type { ECElementEvent } from "echarts/types/dist/shared";
 
 type ECOption = ComposeOption<PieSeriesOption>;
 echarts.use([
@@ -36,8 +37,8 @@ interface PieDataItem {
 }
 
 const data = ref<Record[]>([]);
-const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD");
-const endOfMonth = dayjs().endOf("month").format("YYYY-MM-DD");
+const startOfMonth = getStartOfMonth();
+const endOfMonth = getEndOfMonth();
 const selectDate = ref<[string, string] | []>([startOfMonth, endOfMonth]);
 const categoryList = ref<Category[]>([]);
 const loading = ref(false);
@@ -45,6 +46,15 @@ const canvasExpense = ref<HTMLDivElement | null>(null);
 const canvasIncome = ref<HTMLDivElement | null>(null);
 const chartInstanceExpense = ref<echarts.ECharts | null>(null);
 const chartInstanceIncome = ref<echarts.ECharts | null>(null);
+const dialogVisible = ref(false);
+const detailData = ref<Record[]>([]);
+
+const handleChartClick = (params: ECElementEvent) => {
+  detailData.value = data.value.filter(
+    (item) => item.category.name === params.name,
+  );
+  dialogVisible.value = true;
+};
 
 const getData = async (): Promise<void> => {
   const params = {} as RecordQuery;
@@ -66,10 +76,18 @@ const getData = async (): Promise<void> => {
       },
     });
     data.value = res.data.records;
-    chartInstanceExpense.value = echarts.init(canvasExpense.value);
-    chartInstanceExpense.value.setOption(pieChartOptionExpense);
-    chartInstanceIncome.value = echarts.init(canvasIncome.value);
-    chartInstanceIncome.value.setOption(pieChartOptionIncome);
+
+    if (!chartInstanceExpense.value && canvasExpense.value) {
+      chartInstanceExpense.value = echarts.init(canvasExpense.value);
+      chartInstanceExpense.value.setOption(pieChartOptionExpense);
+      chartInstanceExpense.value.on("click", handleChartClick);
+    }
+
+    if (!chartInstanceIncome.value && canvasIncome.value) {
+      chartInstanceIncome.value = echarts.init(canvasIncome.value);
+      chartInstanceIncome.value.setOption(pieChartOptionIncome);
+      chartInstanceIncome.value.on("click", handleChartClick);
+    }
   } catch (error) {
     console.error(error);
   } finally {
@@ -230,6 +248,23 @@ watch(pieChartDataIncome, (newData) => {
       <div ref="canvasIncome" style="width: 500px; height: 500px"></div>
     </div>
   </DefaultContainer>
+  <el-dialog
+    v-model="dialogVisible"
+    title="明細"
+    width="600px"
+    align-center
+    draggable
+  >
+    <el-table :data="detailData" style="width: 100%">
+      <el-table-column prop="createdAt" label="日期">
+        <template #default="{ row }">
+          {{ formatDate(row.createdAt) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="name" label="項目" />
+      <el-table-column prop="amount" label="金額" />
+    </el-table>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">

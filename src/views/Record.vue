@@ -3,16 +3,15 @@ import { DefaultContainer, CreateOrEditRecord, Card } from "@/components";
 import { ref, onMounted, useTemplateRef, computed } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import api from "@/utils/api";
-import dayjs from "dayjs";
-import "dayjs/locale/zh-tw";
+import { getStartOfMonth, getEndOfMonth, formatDate } from "@/utils/dayjs";
 import type { Record, RecordQuery } from "@/types/record";
 import type { Category } from "@/types/category";
 
 const data = ref<Record[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
-const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD");
-const endOfMonth = dayjs().endOf("month").format("YYYY-MM-DD");
+const startOfMonth = getStartOfMonth();
+const endOfMonth = getEndOfMonth();
 const selectCategories = ref<string[]>([]);
 const selectType = ref<string[]>(["income", "expense"]);
 const selectDate = ref<string[]>([startOfMonth, endOfMonth]);
@@ -20,8 +19,6 @@ const categoryList = ref<Category[]>([]);
 const loading = ref(false);
 const keyword = ref("");
 const createOrEditRecordRef = useTemplateRef("createOrEditRecordRef");
-dayjs.locale("zh-cn");
-dayjs().format();
 
 const filterData = computed(() => {
   return data.value.filter((item) => {
@@ -210,7 +207,7 @@ onMounted(() => {
       <el-table-column type="selection" />
       <el-table-column prop="date" label="建立日期">
         <template #default="{ row }">
-          {{ new Date(row.date).toLocaleDateString("zh-TW") }}
+          {{ formatDate(row.date) }}
         </template>
       </el-table-column>
       <el-table-column prop="category" label="類別">
