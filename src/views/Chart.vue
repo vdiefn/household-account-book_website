@@ -4,23 +4,25 @@ import { DefaultContainer } from "@/components";
 import api from "@/utils/api";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-tw";
-import type { Record, RecordQuery } from "@/types/record";
-import type { Category } from "@/types/category";
 import * as echarts from "echarts/core";
-import { PieChart, BarChart } from "echarts/charts";
+import { PieChart } from "echarts/charts";
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
-  GridComponent,
 } from "echarts/components";
 import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 
+import type { Record, RecordQuery } from "@/types/record";
+import type { Category } from "@/types/category";
+import type { ComputedRef } from "vue";
+import type { PieSeriesOption } from "echarts/charts";
+import type { ComposeOption } from "echarts/core";
+
+type ECOption = ComposeOption<PieSeriesOption>;
 echarts.use([
   PieChart,
-  BarChart,
-  GridComponent,
   TitleComponent,
   TooltipComponent,
   LegendComponent,
@@ -28,29 +30,25 @@ echarts.use([
   LabelLayout,
 ]);
 
-type Typekey = "expense" | "income";
+interface PieDataItem {
+  name: string;
+  value: number;
+}
 
 const data = ref<Record[]>([]);
 const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD");
 const endOfMonth = dayjs().endOf("month").format("YYYY-MM-DD");
-const selectCategories = ref<string[]>([]);
-const selectType = ref<string[]>(["income", "expense"]);
 const selectDate = ref<[string, string] | []>([startOfMonth, endOfMonth]);
 const categoryList = ref<Category[]>([]);
 const loading = ref(false);
-const canvas = ref<HTMLDivElement | null>(null);
-const chartInstance = ref<echarts.ECharts | null>(null);
+const canvasExpense = ref<HTMLDivElement | null>(null);
+const canvasIncome = ref<HTMLDivElement | null>(null);
+const chartInstanceExpense = ref<echarts.ECharts | null>(null);
+const chartInstanceIncome = ref<echarts.ECharts | null>(null);
 
 const getData = async (): Promise<void> => {
   const params = {} as RecordQuery;
   loading.value = true;
-
-  if (selectType.value) {
-    const selected = Array.isArray(selectType.value)
-      ? selectType.value
-      : [selectType.value];
-    params.selectType = selected;
-  }
 
   if (selectDate.value[0]) {
     params.startDate = selectDate.value[0];
@@ -60,13 +58,6 @@ const getData = async (): Promise<void> => {
     params.endDate = selectDate.value[1];
   }
 
-  if (selectCategories.value) {
-    const selected = Array.isArray(selectCategories.value)
-      ? selectCategories.value
-      : [selectCategories.value];
-    params.selectCategories = selected;
-  }
-
   try {
     const res = await api.get("/records", {
       params,
@@ -74,9 +65,11 @@ const getData = async (): Promise<void> => {
         indexes: null,
       },
     });
-    data.value = res.data.records as Record[];
-    chartInstance.value = echarts.init(canvas.value);
-    chartInstance.value.setOption(barChartOption);
+    data.value = res.data.records;
+    chartInstanceExpense.value = echarts.init(canvasExpense.value);
+    chartInstanceExpense.value.setOption(pieChartOptionExpense);
+    chartInstanceIncome.value = echarts.init(canvasIncome.value);
+    chartInstanceIncome.value.setOption(pieChartOptionIncome);
   } catch (error) {
     console.error(error);
   } finally {
@@ -93,62 +86,43 @@ const getCategory = async (): Promise<void> => {
   }
 };
 
-const pieChartData = computed(() => {
-  const pieData = data.value.reduce(
-    (a: { [key in Typekey]: number }, c) => {
-      if (a[c.type]) {
-        a[c.type] += c.amount;
+const pieChartDataExpense: ComputedRef<PieDataItem[]> = computed(() => {
+  const pieData: { [key: string]: number } = data.value
+    .filter((item) => item.type === "expense")
+    .reduce((a: { [key: string]: number }, c) => {
+      if (a[c.category.name]) {
+        a[c.category.name] += c.amount;
       } else {
-        a[c.type] = c.amount;
+        a[c.category.name] = c.amount;
       }
       return a;
-    },
-    { expense: 0, income: 0 },
-  );
+    }, {});
   return Object.entries(pieData).map(([name, value]) => ({
     name,
     value,
   }));
 });
 
-const barChartData = computed(() => {
-  const summary: { [key: string]: number } = {};
-  data.value.forEach((item) => {
-    const categoryName = item.category.name;
-    if (summary[categoryName]) {
-      summary[categoryName] += item.amount;
-    } else {
-      summary[categoryName] = item.amount;
-    }
-  });
-  const categories = Object.keys(summary);
-  const values = Object.values(summary);
-  return { categories, values };
+const pieChartDataIncome: ComputedRef<PieDataItem[]> = computed(() => {
+  const pieData: { [key: string]: number } = data.value
+    .filter((item) => item.type === "income")
+    .reduce((a: { [key: string]: number }, c) => {
+      if (a[c.category.name]) {
+        a[c.category.name] += c.amount;
+      } else {
+        a[c.category.name] = c.amount;
+      }
+      return a;
+    }, {});
+  return Object.entries(pieData).map(([name, value]) => ({
+    name,
+    value,
+  }));
 });
 
-const barChartOption = {
+const pieChartOptionExpense: ECOption = {
   title: {
-    text: "各類別金額統計",
-    left: "center",
-  },
-  tooltip: { trigger: "axis" },
-  xAxis: {
-    type: "category",
-    data: barChartData.value.categories,
-  },
-  yAxis: { type: "value" },
-  series: [
-    {
-      name: "金額",
-      type: "bar",
-      data: barChartData.value.values,
-    },
-  ],
-};
-
-const pieChartOption = {
-  title: {
-    text: "收入 vs 支出",
+    text: "支出",
     subtext: "",
     left: "center",
   },
@@ -161,10 +135,40 @@ const pieChartOption = {
   },
   series: [
     {
-      name: "Access From",
+      name: "說明",
       type: "pie",
       radius: "50%",
-      data: pieChartData.value,
+      data: pieChartDataExpense.value,
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: "rgba(0, 0, 0, 0.5)",
+        },
+      },
+    },
+  ],
+};
+
+const pieChartOptionIncome: ECOption = {
+  title: {
+    text: "收入",
+    subtext: "",
+    left: "center",
+  },
+  tooltip: {
+    trigger: "item",
+  },
+  legend: {
+    orient: "vertical",
+    left: "left",
+  },
+  series: [
+    {
+      name: "說明",
+      type: "pie",
+      radius: "50%",
+      data: pieChartDataIncome.value,
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -181,14 +185,18 @@ onMounted(() => {
   getCategory();
 });
 
-watch(barChartData, (newData) => {
-  if (chartInstance.value) {
-    // chartInstance.value.setOption({
-    //   series: [{ data: newData }],
-    // });
-    chartInstance.value.setOption({
-      xAxis: { data: newData.categories },
-      series: [{ data: newData.values }],
+watch(pieChartDataExpense, (newData) => {
+  if (chartInstanceExpense.value) {
+    chartInstanceExpense.value.setOption({
+      series: [{ data: newData }],
+    });
+  }
+});
+
+watch(pieChartDataIncome, (newData) => {
+  if (chartInstanceIncome.value) {
+    chartInstanceIncome.value.setOption({
+      series: [{ data: newData }],
     });
   }
 });
@@ -200,22 +208,6 @@ watch(barChartData, (newData) => {
       <h4>Chart</h4>
       <div class="header-action">
         <div class="left-action">
-          <el-select v-model="selectType" multiple placeholder="選擇支出/收入">
-            <el-option label="收入" value="income" />
-            <el-option label="支出" value="expense" />
-          </el-select>
-          <el-select
-            v-model="selectCategories"
-            multiple
-            placeholder="選擇類型名稱"
-          >
-            <el-option
-              v-for="item in categoryList"
-              :key="item._id"
-              :value="item._id"
-              :label="item.name"
-            />
-          </el-select>
           <el-date-picker
             v-model="selectDate"
             class="date-picker"
@@ -224,7 +216,6 @@ watch(barChartData, (newData) => {
             start-placeholder="起始日"
             end-placeholder="結束日"
             format="YYYY/MM/DD"
-            value-format="YYYY-MM-DD"
           />
           <el-button @click="getData">
             <template #icon>
@@ -234,7 +225,10 @@ watch(barChartData, (newData) => {
         </div>
       </div>
     </template>
-    <div ref="canvas" style="width: 500px; height: 500px"></div>
+    <div class="canvas-wrapper">
+      <div ref="canvasExpense" style="width: 500px; height: 500px"></div>
+      <div ref="canvasIncome" style="width: 500px; height: 500px"></div>
+    </div>
   </DefaultContainer>
 </template>
 
@@ -267,5 +261,10 @@ watch(barChartData, (newData) => {
   .right-action {
     justify-content: flex-end;
   }
+}
+.canvas-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 </style>
