@@ -15,7 +15,7 @@ const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD");
 const endOfMonth = dayjs().endOf("month").format("YYYY-MM-DD");
 const selectCategories = ref<string[]>([]);
 const selectType = ref<string[]>(["income", "expense"]);
-const selectDate = ref<[string, string] | []>([startOfMonth, endOfMonth]);
+const selectDate = ref<string[]>([startOfMonth, endOfMonth]);
 const categoryList = ref<Category[]>([]);
 const loading = ref(false);
 const keyword = ref("");
@@ -82,7 +82,6 @@ const getData = async (): Promise<void> => {
       },
     });
     data.value = res.data.records as Record[];
-    console.log(data.value);
   } catch (error) {
     console.error(error);
   } finally {
@@ -177,11 +176,9 @@ onMounted(() => {
             v-model="selectDate"
             class="date-picker"
             type="daterange"
-            range-separator="-"
             start-placeholder="起始日"
             end-placeholder="結束日"
             format="YYYY/MM/DD"
-            value-format="YYYY-MM-DD"
           />
           <el-button @click="getData">
             <template #icon>
