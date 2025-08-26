@@ -15,6 +15,8 @@
   border: 1px solid white;
   height: 90%;
   width: 98%;
+  display: flex;
+  flex-direction: column;
   border-radius: 15px;
   padding: 1rem;
   background-color: white;

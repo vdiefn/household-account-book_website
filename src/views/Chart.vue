@@ -298,6 +298,7 @@ watch(pieChartDataIncome, (newData) => {
   }
 }
 .canvas-wrapper {
+  margin: auto 0;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
