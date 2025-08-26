@@ -2,6 +2,7 @@
 import { ref, reactive } from "vue";
 import api from "@/utils/api";
 import { ElMessage } from "element-plus";
+import { formatDate } from "@/utils/dayjs";
 import type { Category } from "@/types/category";
 import type { Record } from "@/types/record";
 
@@ -45,17 +46,27 @@ const open = (mode: OpenMode) => {
   } else if (mode.type === "edit") {
     currentMode.value = "edit";
     Object.assign(form, mode.data);
+    form.category = mode.data.category._id;
   }
 
   dialogVisible.value = true;
 };
 
 const confirm = async (): Promise<void> => {
+  const payload = {
+    name: form.name,
+    category: form.category,
+    amount: form.amount,
+    type: form.type,
+    date: formatDate(form.date),
+    note: form.note,
+    _id: currentMode.value === "create" ? "" : form._id,
+  };
   const method = currentMode.value === "create" ? "post" : "put";
   const url =
     currentMode.value === "create" ? "/records" : `/records/${form._id}`;
   try {
-    const res = await api[method](url, form);
+    const res = await api[method](url, payload);
 
     if (res.status === 200) {
       ElMessage({
