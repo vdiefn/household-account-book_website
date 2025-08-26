@@ -11,6 +11,7 @@ declare module 'vue' {
     Aside: typeof import('./src/components/Aside.vue')['default']
     Card: typeof import('./src/components/Card.vue')['default']
     CreateOrEditRecord: typeof import('./src/components/CreateOrEditRecord.vue')['default']
+    DashboardCard: typeof import('./src/components/DashboardCard.vue')['default']
     DefaultContainer: typeof import('./src/components/DefaultContainer.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
