@@ -124,12 +124,12 @@ const getMonthTrend = async (): Promise<void> => {
       series: [
         {
           type: "bar",
-          data: [...barChartIncomeData.value],
+          data: barChartIncomeData.value,
           name: "收入",
         },
         {
           type: "bar",
-          data: [...barChartExpenseData.value],
+          data: barChartExpenseData.value,
           name: "支出",
         },
       ],
