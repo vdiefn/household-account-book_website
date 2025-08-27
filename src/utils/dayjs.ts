@@ -15,3 +15,7 @@ export const getStartOfMonth = () => {
 export const getEndOfMonth = () => {
   return dayjs().endOf("month").format("YYYY-MM-DD");
 };
+
+export const getDaysInMonth = () => {
+  return dayjs().daysInMonth();
+};
