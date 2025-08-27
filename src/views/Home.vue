@@ -27,7 +27,6 @@ echarts.use([
   ToolboxComponent,
   TitleComponent,
   TooltipComponent,
-  LegendComponent,
   CanvasRenderer,
   LabelLayout,
   GridComponent,
@@ -73,19 +72,44 @@ const daysInMonthList = computed(() => {
 });
 
 const barChartOption: EChartsOption = {
+  title: {
+    text: "當月收入/支出趨勢圖",
+  },
+  tooltip: {
+    trigger: "item",
+    axisPointer: {
+      type: "shadow",
+    },
+    formatter: (params: any) => {
+      return `${params.seriesName}<br>${params.name}日 : ${params.value}`;
+    },
+  },
+  grid: {
+    left: "3%",
+    right: "4%",
+    bottom: "15%",
+    containLabel: true,
+  },
+  legend: {
+    data: ["收入", "支出"],
+    left: "center",
+    bottom: 0,
+  },
   xAxis: {
     type: "category",
     data: daysInMonthList.value,
+    name: "日期",
+    nameLocation: "middle",
+    nameGap: 30,
+    axisTick: {
+      alignWithLabel: true,
+    },
   },
   yAxis: {
     type: "value",
+    name: "金額",
   },
-  series: [
-    {
-      data: [120, 200, 150, 80, 70, 110, 130],
-      type: "bar",
-    },
-  ],
+  series: [],
 };
 
 const getMonthTrend = async (): Promise<void> => {
@@ -100,11 +124,13 @@ const getMonthTrend = async (): Promise<void> => {
       series: [
         {
           type: "bar",
-          data: barChartIncomeData.value,
+          data: [...barChartIncomeData.value],
+          name: "收入",
         },
         {
           type: "bar",
-          data: barChartExpenseData.value,
+          data: [...barChartExpenseData.value],
+          name: "支出",
         },
       ],
     });
@@ -221,17 +247,21 @@ onMounted(() => {
   grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
 
+  .chart-wrapper,
+  .info-wrapper {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+  }
+
   .chart-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 1rem 0;
-    border: 1px solid lightgray;
   }
 
   .info-wrapper {
     padding: 1rem;
-    border: 1px solid lightgray;
   }
 }
 </style>
