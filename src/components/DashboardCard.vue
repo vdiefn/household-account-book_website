@@ -11,7 +11,7 @@ const props = defineProps<{
       <h5>{{ props.title }}</h5>
     </div>
     <div class="amount-wrapper">
-      <h2 :style="{ color: props.textColor }">{{ props.amount }}</h2>
+      <h2 :style="{ color: props.textColor }">$ {{ props.amount }}</h2>
     </div>
   </ElCard>
 </template>
