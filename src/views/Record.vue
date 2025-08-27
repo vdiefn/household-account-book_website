@@ -29,6 +29,12 @@ const filterData = computed(() => {
   });
 });
 
+const paginationData = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filterData.value.slice(start, end);
+});
+
 const expenseAmount = computed(() => {
   return filterData.value
     .filter((item) => item.type === "expense")
@@ -138,9 +144,14 @@ const handleEditRecord = (row: Record) => {
   createOrEditRecordRef.value?.open({ type: "edit", data: row });
 };
 
-const handleCurrentChange = () => {};
+const handleCurrentChange = (page: number) => {
+  currentPage.value = page;
+};
 
-const handleSizeChange = () => {};
+const handleSizeChange = (size: number) => {
+  pageSize.value = size;
+  currentPage.value = 1;
+};
 
 onMounted(() => {
   getData();
@@ -203,7 +214,7 @@ onMounted(() => {
       </el-card>
       <Card :title="'收入'" :amount="incomeAmount" />
     </div>
-    <el-table :data="filterData" stripe v-loading="loading">
+    <el-table :data="paginationData" stripe v-loading="loading">
       <el-table-column type="selection" />
       <el-table-column prop="date" label="建立日期">
         <template #default="{ row }">
@@ -254,7 +265,7 @@ onMounted(() => {
         <el-pagination
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
-          :total="data.length"
+          :total="filterData.length"
           :page-sizes="[10, 15, 20, 30]"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
