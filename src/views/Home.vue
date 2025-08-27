@@ -2,7 +2,7 @@
 import { DashboardCard } from "@/components";
 import api from "@/utils/api";
 import { ref, onMounted, computed } from "vue";
-import { getDaysInMonth } from "@/utils/dayjs";
+import { getDaysInMonth, formatDate } from "@/utils/dayjs";
 import * as echarts from "echarts/core";
 import { BarChart } from "echarts/charts";
 import {
@@ -16,6 +16,7 @@ import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 
 import type { Summary, BarChartItem } from "@/types/summary";
+import type { Record, RecordQuery } from "@/types/record";
 import type { BarSeriesOption } from "echarts/charts";
 
 type EChartsOption = echarts.ComposeOption<BarSeriesOption>;
@@ -37,6 +38,8 @@ const barChartIncomeData = ref<number[]>([]);
 const barChartExpenseData = ref<number[]>([]);
 const barChartRef = ref<HTMLDivElement | null>(null);
 const barChartInstance = ref<echarts.ECharts | null>(null);
+const loading = ref(false);
+const data = ref<Record[]>([]);
 const monthSummary = ref<Summary>({
   income: 0,
   expense: 0,
@@ -110,10 +113,30 @@ const getMonthTrend = async (): Promise<void> => {
   }
 };
 
+const getData = async (): Promise<void> => {
+  const params = {} as RecordQuery;
+  loading.value = true;
+
+  try {
+    const res = await api.get("/records", {
+      params,
+      paramsSerializer: {
+        indexes: null,
+      },
+    });
+    data.value = res.data.records;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
 onMounted(() => {
   getMonthSummary();
   getWeekSummary();
   getMonthTrend();
+  getData();
 });
 </script>
 <template>
@@ -149,7 +172,36 @@ onMounted(() => {
       <div class="chart-wrapper">
         <div ref="barChartRef" style="width: 90%; height: 400px"></div>
       </div>
-      <div class="info-wrapper"></div>
+      <div class="info-wrapper">
+        <el-table :data="data.slice(0, 8)" style="width: 100%">
+          <el-table-column prop="date" label="Date" width="180">
+            <template #default="{ row }">
+              {{ formatDate(row.date) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="category" label="類別">
+            <template #default="{ row }">
+              {{ row.category?.name }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="type" label="支出/收入">
+            <template #default="{ row }">
+              <template v-if="row.type === 'income'">
+                <el-tag type="success">
+                  {{ "收入" }}
+                </el-tag>
+              </template>
+              <template v-if="row.type === 'expense'">
+                <el-tag type="warning">
+                  {{ "支出" }}
+                </el-tag>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="項目名稱" />
+          <el-table-column prop="amount" label="金額" />
+        </el-table>
+      </div>
     </div>
   </DefaultContainer>
 </template>
@@ -166,20 +218,20 @@ onMounted(() => {
   margin: 1rem 0;
   padding: 1rem;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
-  border: 1px solid red;
 
   .chart-wrapper {
-    border: 1px solid blue;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 1rem 0;
+    border: 1px solid lightgray;
   }
 
   .info-wrapper {
-    border: 1px solid green;
+    padding: 1rem;
+    border: 1px solid lightgray;
   }
 }
 </style>
