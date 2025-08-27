@@ -149,7 +149,7 @@ const pieChartOptionExpense: ECOption = {
   },
   legend: {
     orient: "vertical",
-    left: "left",
+    left: "middle",
   },
   series: [
     {
@@ -179,7 +179,7 @@ const pieChartOptionIncome: ECOption = {
   },
   legend: {
     orient: "vertical",
-    left: "left",
+    left: "middle",
   },
   series: [
     {
@@ -244,8 +244,8 @@ watch(pieChartDataIncome, (newData) => {
       </div>
     </template>
     <div class="canvas-wrapper">
-      <div ref="canvasExpense" style="width: 500px; height: 500px"></div>
-      <div ref="canvasIncome" style="width: 500px; height: 500px"></div>
+      <div ref="canvasExpense" style="width: 50%; height: 500px"></div>
+      <div ref="canvasIncome" style="width: 50%; height: 500px"></div>
     </div>
   </DefaultContainer>
   <el-dialog
@@ -256,9 +256,9 @@ watch(pieChartDataIncome, (newData) => {
     draggable
   >
     <el-table :data="detailData" style="width: 100%">
-      <el-table-column prop="createdAt" label="日期">
+      <el-table-column prop="date" label="日期">
         <template #default="{ row }">
-          {{ formatDate(row.createdAt) }}
+          {{ formatDate(row.date) }}
         </template>
       </el-table-column>
       <el-table-column prop="name" label="項目" />
