@@ -13,8 +13,8 @@ export interface Record {
 
 export interface RecordQuery {
   selectType?: string[];
-  startDate?: string;
-  endDate?: string;
+  startDate?: Date;
+  endDate?: Date;
   selectItems?: string[];
   selectCategories?: string[];
 }
