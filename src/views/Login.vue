@@ -1,14 +1,19 @@
 <script lang="ts" setup>
 import { reactive } from "vue";
+import type { LoginForm } from "@/types/user";
 
-const loginForm = reactive({
+const loginForm = reactive<LoginForm>({
   email: "",
   password: "",
 });
+
+const login = async (): Promise<void> => {
+  console.log(loginForm);
+};
 </script>
 <template>
   <div class="login-container">
-    <el-form class="login-form">
+    <el-form class="login-form" :model="loginForm">
       <h1>HELLO</h1>
       <h2>歡迎使用記帳系統</h2>
       <el-form-item>
@@ -22,7 +27,9 @@ const loginForm = reactive({
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button class="login-btn" type="success">登入</el-button>
+        <el-button class="login-btn" type="success" @click="login">
+          登入
+        </el-button>
         <el-button link>註冊</el-button>
       </el-form-item>
     </el-form>
@@ -30,8 +37,9 @@ const loginForm = reactive({
 </template>
 <style lang="scss" scoped>
 .login-container {
-  width: 100dvw;
-  height: 100dvh;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,13 +48,14 @@ const loginForm = reactive({
   background-size: cover;
 
   .login-form {
-    width: 600px;
+    width: 80%;
+    min-width: 300px;
     height: 350px;
     padding: 2rem;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(166, 182, 167, 0.3);
 
     h1,
     h2 {
@@ -63,6 +72,13 @@ const loginForm = reactive({
       color: #2f4f4f;
       font-size: 20px;
       margin: 20px 0;
+    }
+  }
+
+  @media (min-width: $breakpoint-tablet) {
+    .login-form {
+      width: 500px;
+      height: 350px;
     }
   }
 }
