@@ -1,14 +1,36 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/modules/user";
 import type { LoginForm } from "@/types/user";
+import { ElNotification } from "element-plus";
 
+const loading = ref(false);
+const router = useRouter();
+const userStore = useUserStore();
 const loginForm = reactive<LoginForm>({
-  email: "",
-  password: "",
+  email: "userOne@user.com",
+  password: "userone",
 });
 
-const login = async (): Promise<void> => {
-  console.log(loginForm);
+const login = async () => {
+  loading.value = true;
+  try {
+    await userStore.login(loginForm);
+    router.push("/");
+    ElNotification({
+      type: "success",
+      message: "登入成功",
+    });
+  } catch (err) {
+    console.error(err);
+    ElNotification({
+      type: "error",
+      message: (err as Error).message,
+    });
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 <template>
