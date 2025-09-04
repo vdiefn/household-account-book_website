@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import api from "@/utils/api";
-import axios, { AsioxError } from "axios";
+import axios from "axios";
 import type { LoginForm } from "@/types/user";
 
 export const useUserStore = defineStore("User", () => {
