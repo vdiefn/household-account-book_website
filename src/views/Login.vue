@@ -13,10 +13,11 @@ const loginForm = reactive<LoginForm>({
   password: "userone",
 });
 
-const login = async () => {
+const handleLogin = async () => {
   loading.value = true;
   try {
     await userStore.login(loginForm);
+
     router.push("/");
     ElNotification({
       type: "success",
@@ -49,7 +50,7 @@ const login = async () => {
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button class="login-btn" type="success" @click="login">
+        <el-button class="login-btn" type="success" @click="handleLogin">
           登入
         </el-button>
         <el-button link>註冊</el-button>

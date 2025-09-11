@@ -11,16 +11,20 @@ export const useUserStore = defineStore("User", () => {
       const res = await api.post("/users/login", data);
       localStorage.setItem("TOKEN", res.data.token);
       token.value = res.data.token || "";
-      return "OK";
+      return res.data;
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         console.error(err.response?.data?.error || "Request failed");
+        throw new Error(err.response?.data?.error || "Request failed");
       } else if (err instanceof Error) {
         console.error(err.message);
+        throw err;
       } else {
         console.error("Unknown error:", err);
+        throw new Error("Unknown error");
       }
     }
   };
+
   return { login, token };
 });
