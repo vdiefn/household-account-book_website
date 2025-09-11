@@ -7,6 +7,11 @@ export const routes = [
     name: "login",
   },
   {
+    path: "/register",
+    component: () => import("@/views/Register.vue"),
+    name: "register",
+  },
+  {
     path: "/",
     component: () => import("@/layout/index.vue"),
     children: [
