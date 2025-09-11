@@ -4,5 +4,5 @@ export interface LoginForm {
 }
 
 export interface RegisterForm extends LoginForm {
-  confirmedPAssword: string;
+  confirmedPassword: string;
 }
