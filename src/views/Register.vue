@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" setup>
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
 import type { RegisterForm } from "@/types/user";
@@ -40,7 +40,7 @@ const form = reactive<RegisterForm>({
         >
           登入
         </el-button>
-        <el-button link @click="handleRegister">註冊</el-button>
+        <el-button link>註冊</el-button>
       </el-form-item>
     </el-form>
   </div>
