@@ -53,7 +53,7 @@ const handleLogin = async () => {
         <el-button class="login-btn" type="success" @click="handleLogin">
           登入
         </el-button>
-        <el-button link>註冊</el-button>
+        <el-button link @click="router.push('/register')">註冊</el-button>
       </el-form-item>
     </el-form>
   </div>
