@@ -20,6 +20,7 @@ import type { ComputedRef } from "vue";
 import type { PieSeriesOption } from "echarts/charts";
 import type { ComposeOption } from "echarts/core";
 import type { ECElementEvent } from "echarts/types/dist/shared";
+import type { Dayjs } from "dayjs";
 
 type ECOption = ComposeOption<PieSeriesOption>;
 echarts.use([
@@ -39,7 +40,7 @@ interface PieDataItem {
 const data = ref<Record[]>([]);
 const startOfMonth = getStartOfMonth();
 const endOfMonth = getEndOfMonth();
-const selectDate = ref<[string, string] | []>([startOfMonth, endOfMonth]);
+const selectDate = ref<[Dayjs, Dayjs] | []>([startOfMonth, endOfMonth]);
 const categoryList = ref<Category[]>([]);
 const loading = ref(false);
 const canvasExpense = ref<HTMLDivElement | null>(null);
@@ -61,11 +62,11 @@ const getData = async (): Promise<void> => {
   loading.value = true;
 
   if (selectDate.value[0]) {
-    params.startDate = selectDate.value[0];
+    params.startDate = selectDate.value[0].toDate();
   }
 
   if (selectDate.value[1]) {
-    params.endDate = selectDate.value[1];
+    params.endDate = selectDate.value[1].toDate();
   }
 
   try {
