@@ -1,14 +1,104 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { ElNotification } from "element-plus";
+import api from "@/utils/api";
 import type { RegisterForm } from "@/types/user";
+import type { FormInstance, FormRules } from "element-plus";
 
 const router = useRouter();
+const loading = ref(false);
+const formRef = ref<FormInstance>();
 const form = reactive<RegisterForm>({
+  name: "",
   email: "",
   password: "",
   confirmedPassword: "",
 });
+
+const validatePass = (rule: any, value: any, callback: any) => {
+  if (value === "") {
+    callback(new Error("Please input the password"));
+  } else {
+    if (form.confirmedPassword !== "") {
+      if (!formRef.value) return;
+      formRef.value.validateField("confirmedPassword");
+    }
+    callback();
+  }
+};
+const validatePass2 = (rule: any, value: any, callback: any) => {
+  if (value === "") {
+    callback(new Error("請輸入確認密碼"));
+  } else if (value !== form.password) {
+    callback(new Error("密碼與確認密碼不相同"));
+  } else {
+    callback();
+  }
+};
+
+const rules = reactive<FormRules<RegisterForm>>({
+  password: [
+    { required: true, message: "請輸入密碼", trigger: "blur" },
+    { validator: validatePass, trigger: "blur" },
+  ],
+  confirmedPassword: [
+    {
+      required: true,
+      message: "請輸入確認密碼",
+      trigger: "blur",
+    },
+    { validator: validatePass2, trigger: "blur" },
+  ],
+  name: [
+    {
+      required: true,
+      message: "請輸入使用者名稱",
+      trigger: "blur",
+    },
+    { min: 3, message: "長度至少為三位數", trigger: "blur" },
+  ],
+  email: [
+    {
+      required: true,
+      message: "請輸入Email",
+      trigger: "blur",
+    },
+    {
+      type: "email",
+      message: "請輸入正確的Email帳號",
+      trigger: ["blur", "change"],
+    },
+  ],
+});
+
+const handleRegister = async () => {
+  if (!formRef.value) return;
+  await formRef.value.validate();
+  loading.value = true;
+  try {
+    const res = await api.post("/users/register", form);
+    console.log(res);
+    if (res.data.status === "success") {
+      ElNotification({
+        type: "success",
+        message: "註冊成功",
+      });
+      router.push("/login");
+    } else {
+      ElNotification({
+        type: "error",
+        message: "註冊失敗，請聯絡管理人員",
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    ElNotification({
+      type: "error",
+      message: (err as Error).message,
+    });
+  }
+};
 </script>
 <template>
   <div class="login-container">
@@ -18,27 +108,36 @@ const form = reactive<RegisterForm>({
         <img src="/register.png" />
       </div>
 
-      <el-form class="login-form" :model="form">
+      <el-form class="login-form" :model="form" :rules="rules" ref="formRef">
         <h2>使用者註冊</h2>
-        <el-form-item label="Email" label-position="top">
+        <el-form-item label="姓名" label-position="top" prop="name">
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item label="Email" label-position="top" prop="email">
           <el-input v-model="form.email" />
         </el-form-item>
-        <el-form-item label="密碼" label-position="top">
+        <el-form-item label="密碼" label-position="top" prop="password">
           <el-input
             type="password"
             v-model="form.password"
             show-password
-          ></el-input>
+            autocomplete="off"
+          />
         </el-form-item>
-        <el-form-item label="確認密碼" label-position="top">
+        <el-form-item
+          label="確認密碼"
+          label-position="top"
+          prop="confirmedPassword"
+        >
           <el-input
             type="password"
             v-model="form.confirmedPassword"
             show-password
-          ></el-input>
+            autocomplete="off"
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="success">註冊</el-button>
+          <el-button type="success" @click="handleRegister">註冊</el-button>
           <el-button class="login-btn" @click="router.push('/login')" link>
             返回登入
           </el-button>
@@ -87,6 +186,10 @@ const form = reactive<RegisterForm>({
         font-size: 1.5rem;
       }
     }
+  }
+
+  .el-button {
+    margin-top: 10px;
   }
 
   @media (min-width: $breakpoint-tablet) {
