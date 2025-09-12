@@ -16,18 +16,17 @@ const form = reactive<RegisterForm>({
   confirmedPassword: "",
 });
 
-const validatePass = (rule: any, value: any, callback: any) => {
+const validatePass = (_rule: any, value: any, callback: any) => {
   if (value === "") {
     callback(new Error("Please input the password"));
   } else {
     if (form.confirmedPassword !== "") {
-      if (!formRef.value) return;
-      formRef.value.validateField("confirmedPassword");
+      formRef.value?.validateField("confirmedPassword");
     }
     callback();
   }
 };
-const validatePass2 = (rule: any, value: any, callback: any) => {
+const validatePass2 = (_rule: any, value: any, callback: any) => {
   if (value === "") {
     callback(new Error("請輸入確認密碼"));
   } else if (value !== form.password) {
