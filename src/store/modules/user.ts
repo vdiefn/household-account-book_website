@@ -5,12 +5,14 @@ import axios from "axios";
 import type { LoginForm } from "@/types/user";
 
 export const useUserStore = defineStore("User", () => {
-  const token = ref("");
+  const token = ref(localStorage.getItem("token") || "");
+
   const login = async (data: LoginForm) => {
     try {
       const res = await api.post("/users/login", data);
-      localStorage.setItem("TOKEN", res.data.token);
+      localStorage.setItem("token", res.data.token);
       token.value = res.data.token || "";
+
       return res.data;
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
