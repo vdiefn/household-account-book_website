@@ -43,6 +43,7 @@ const open = (mode: OpenMode) => {
   });
   if (mode.type === "create") {
     currentMode.value = "create";
+    form.date = formatDate(new Date());
   } else if (mode.type === "edit") {
     currentMode.value = "edit";
     Object.assign(form, mode.data);
@@ -58,10 +59,11 @@ const confirm = async (): Promise<void> => {
     category: form.category,
     amount: form.amount,
     type: form.type,
-    date: formatDate(form.date),
+    date: form.date,
     note: form.note,
     _id: currentMode.value === "create" ? "" : form._id,
   };
+  console.log(payload);
   const method = currentMode.value === "create" ? "post" : "put";
   const url =
     currentMode.value === "create" ? "/records" : `/records/${form._id}`;
