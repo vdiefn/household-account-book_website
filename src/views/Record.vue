@@ -1,9 +1,15 @@
 <script lang="ts" setup>
-import { DefaultContainer, CreateOrEditRecord, Card } from "@/components";
+import {
+  DefaultContainer,
+  CreateOrEditRecord,
+  Card,
+  DrawerCreateOrEditCategory,
+} from "@/components";
 import { ref, onMounted, useTemplateRef, computed } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import api from "@/utils/api";
 import { getStartOfMonth, getEndOfMonth, formatDate } from "@/utils/dayjs";
+import { useCategoryStore } from "@/store/modules/category";
 import type { Record, RecordQuery } from "@/types/record";
 import type { Category } from "@/types/category";
 
@@ -19,6 +25,8 @@ const categoryList = ref<Category[]>([]);
 const loading = ref(false);
 const keyword = ref("");
 const createOrEditRecordRef = useTemplateRef("createOrEditRecordRef");
+const createOrEditCategoryRef = useTemplateRef("createOrEditCategoryRef");
+const categoryStore = useCategoryStore();
 
 const filterData = computed(() => {
   return data.value.filter((item) => {
@@ -92,13 +100,9 @@ const getData = async (): Promise<void> => {
   }
 };
 
-const getCategory = async (): Promise<void> => {
-  try {
-    const res = await api.get("/categories");
-    categoryList.value = res.data.categories;
-  } catch (err) {
-    console.error(err);
-  }
+const getCategoryData = async () => {
+  await categoryStore.getCategory();
+  categoryList.value = categoryStore.categoryData;
 };
 
 const handleCreateRecord = () => {
@@ -153,9 +157,13 @@ const handleSizeChange = (size: number) => {
   currentPage.value = 1;
 };
 
+const handleCategoryCreateRecord = (): void => {
+  createOrEditCategoryRef.value?.open();
+};
+
 onMounted(() => {
   getData();
-  getCategory();
+  getCategoryData();
 });
 </script>
 <template>
@@ -195,7 +203,12 @@ onMounted(() => {
           </el-button>
         </div>
         <div class="right-action">
-          <el-button type="primary" @click="handleCreateRecord">新增</el-button>
+          <el-button type="primary" @click="handleCreateRecord">
+            新增收支
+          </el-button>
+          <el-button type="primary" @click="handleCategoryCreateRecord">
+            類別設定
+          </el-button>
         </div>
       </div>
     </template>
@@ -279,6 +292,10 @@ onMounted(() => {
     @form-update="getData"
     :categoryList="categoryList"
   />
+  <DrawerCreateOrEditCategory
+    ref="createOrEditCategoryRef"
+    :categoryList="categoryList"
+  />
 </template>
 <style lang="scss" scoped>
 .header-action {
@@ -307,6 +324,7 @@ onMounted(() => {
   }
 
   .right-action {
+    display: flex;
     justify-content: flex-end;
   }
 }
