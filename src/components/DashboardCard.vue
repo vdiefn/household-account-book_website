@@ -17,7 +17,7 @@ const props = defineProps<{
 </template>
 <style lang="scss" scoped>
 .card {
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
