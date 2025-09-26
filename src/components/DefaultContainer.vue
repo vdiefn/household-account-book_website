@@ -12,14 +12,14 @@
 </template>
 <style lang="scss" scoped>
 .default-container {
-  border: 1px solid white;
-  height: 90%;
+  border: 1px solid $background-border;
+  height: 83%;
   width: 98%;
   display: flex;
   flex-direction: column;
-  border-radius: 15px;
+  border-radius: $background-radius;
   padding: 1rem;
-  background-color: white;
+  background-color: $background-color;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
