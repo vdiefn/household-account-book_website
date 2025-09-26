@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RouterView } from "vue-router";
 import Aside from "@/components/Aside.vue";
+import Header from "@/components/Header.vue";
 </script>
 <template>
   <div class="container">
@@ -8,6 +9,7 @@ import Aside from "@/components/Aside.vue";
       <Aside></Aside>
     </aside>
     <main>
+      <Header></Header>
       <RouterView></RouterView>
     </main>
   </div>
@@ -46,6 +48,7 @@ import Aside from "@/components/Aside.vue";
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
     height: 100%;
   }
 }
