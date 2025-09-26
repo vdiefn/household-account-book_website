@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/store/modules/user";
 import type { LoginForm } from "@/types/user";
 import { ElNotification } from "element-plus";
+import { useUserStore } from "@/store/modules/user";
 
 const loading = ref(false);
 const router = useRouter();
@@ -13,21 +13,24 @@ const loginForm = reactive<LoginForm>({
   password: "userone",
 });
 
-const handleLogin = async () => {
+const getLogin = async (): Promise<void> => {
   loading.value = true;
   try {
-    await userStore.login(loginForm);
+    const res = await userStore.handleLogin(loginForm);
+    if (res.status === 200) {
+      router.push("/");
 
-    router.push("/");
-    ElNotification({
-      type: "success",
-      message: "登入成功",
-    });
-  } catch (err) {
+      ElNotification({
+        type: "success",
+        message: "登入成功",
+      });
+    }
+  } catch (err: any) {
     console.error(err);
+
     ElNotification({
       type: "error",
-      message: (err as Error).message,
+      message: (err as string) || "Server Error",
     });
   } finally {
     loading.value = false;
@@ -50,7 +53,7 @@ const handleLogin = async () => {
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button class="login-btn" type="success" @click="handleLogin">
+        <el-button class="login-btn" type="success" @click="getLogin">
           登入
         </el-button>
         <el-button link @click="router.push('/register')">註冊</el-button>
