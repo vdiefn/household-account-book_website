@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { setGuards } from "@/router/guard";
 
 export const routes = [
   {
@@ -39,9 +40,18 @@ export const routes = [
   { path: "/:pathMatch(.*)*", redirect: "/404", name: "any" },
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
+// const router = createRouter({
+//   history: createWebHistory(),
+//   routes,
+// });
 
-export default router;
+// export default router;
+
+export const useRouter = () => {
+  const router = createRouter({
+    history: createWebHistory(),
+    routes,
+  });
+
+  return setGuards(router);
+};
