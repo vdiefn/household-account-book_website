@@ -1,32 +1,44 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
-import api from "@/utils/api";
-import axios from "axios";
-import type { LoginForm } from "@/types/user";
+import { ref, computed } from "vue";
+import { reqLogin } from "@/api/user";
+import type { LoginForm, UserInfo } from "@/types/user";
 
 export const useUserStore = defineStore("User", () => {
   const token = ref(localStorage.getItem("token") || "");
+  const state = ref<boolean>(false);
+  const userInfo = ref<UserInfo>({
+    _id: "",
+    email: "",
+    name: "",
+    createdAt: "",
+  });
 
-  const login = async (data: LoginForm) => {
+  const isLogin = computed(() => {
+    return state.value;
+  });
+
+  const handleLogin = async (data: LoginForm) => {
     try {
-      const res = await api.post("/users/login", data);
+      const res = await reqLogin(data);
       localStorage.setItem("token", res.data.token);
       token.value = res.data.token || "";
-
-      return res.data;
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        console.error(err.response?.data?.error || "Request failed");
-        throw new Error(err.response?.data?.error || "Request failed");
-      } else if (err instanceof Error) {
-        console.error(err.message);
-        throw err;
-      } else {
-        console.error("Unknown error:", err);
-        throw new Error("Unknown error");
-      }
+      userInfo.value = res.data.user;
+      return res;
+    } catch (err: any) {
+      throw new Error(err.response.data.error);
     }
   };
 
-  return { login, token };
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    token.value = "";
+    userInfo.value = {
+      _id: "",
+      email: "",
+      name: "",
+      createdAt: "",
+    };
+  };
+
+  return { handleLogin, handleLogout, token, userInfo, isLogin };
 });
