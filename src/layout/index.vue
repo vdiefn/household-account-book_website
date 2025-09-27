@@ -21,6 +21,7 @@ import Header from "@/components/Header.vue";
   display: grid;
   grid-template-columns: 250px 1fr;
   grid-template-rows: 100%;
+  gap: 1rem;
   position: relative;
 
   &::before {
@@ -44,12 +45,11 @@ import Header from "@/components/Header.vue";
   }
 
   main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 50px minmax(200px, 1fr);
     gap: 1rem;
-    height: 100%;
+    margin: 1rem;
   }
 }
 </style>

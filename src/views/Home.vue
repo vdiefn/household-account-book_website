@@ -237,8 +237,6 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(4, minmax(150px, 1fr));
   grid-gap: 10px;
-  margin: 1rem 0;
-  padding: 1rem;
 }
 .trend-info-wrapper {
   margin: 1rem 0;

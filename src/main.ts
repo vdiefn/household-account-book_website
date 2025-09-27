@@ -17,11 +17,20 @@ import {
   faChartLine,
   faTableList,
   faMagnifyingGlass,
+  faRightFromBracket,
+  faCircleUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHouse } from "@fortawesome/free-regular-svg-icons";
 import {} from "@fortawesome/free-brands-svg-icons";
 
-library.add(faHouse, faChartLine, faTableList, faMagnifyingGlass);
+library.add(
+  faHouse,
+  faChartLine,
+  faTableList,
+  faMagnifyingGlass,
+  faRightFromBracket,
+  faCircleUser,
+);
 
 const app = createApp(App);
 
