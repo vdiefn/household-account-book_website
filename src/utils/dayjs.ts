@@ -8,6 +8,10 @@ export const formatDate = (date: string | Date) => {
   return dayjs(date).format("YYYY/MM/DD");
 };
 
+export const formatTime = (date: string | Date) => {
+  return dayjs(date).format("YYYY/MM/DD HH:mm");
+};
+
 export const toUnix = (date: string | Date) => {
   return dayjs(date).unix();
 };
