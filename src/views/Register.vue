@@ -2,12 +2,12 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
-import api from "@/utils/api";
+import { reqRegister } from "@/api/user";
 import type { RegisterForm } from "@/types/user";
 import type { FormInstance, FormRules } from "element-plus";
 
 const router = useRouter();
-const loading = ref(false);
+const loading = ref<boolean>(false);
 const formRef = ref<FormInstance>();
 const form = reactive<RegisterForm>({
   name: "",
@@ -76,7 +76,7 @@ const handleRegister = async () => {
   await formRef.value.validate();
   loading.value = true;
   try {
-    const res = await api.post("/users/register", form);
+    const res = await reqRegister(form);
     console.log(res);
     if (res.data.status === "success") {
       ElNotification({
