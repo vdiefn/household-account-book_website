@@ -11,7 +11,12 @@ export const setGuards = (router: Router): Router => {
     const token = userStore.token;
     const userInfo = userStore.userInfo;
 
-    if (!token && to.name !== "login") return { name: "login" };
+    const whiteList: string[] = ["login", "register"];
+
+    if (!token && !whiteList.includes(to.name as string)) {
+      return { name: "login" };
+    }
+
     if (to.name === "login" && token) return { path: "/" };
 
     if (!userInfo) {
