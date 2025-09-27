@@ -2,19 +2,19 @@
 <template>
   <section class="default-container">
     <header class="default-header">
-      <slot name="header" />
+      <slot name="header"></slot>
     </header>
-    <slot name="default" />
+    <slot name="default"></slot>
     <footer class="default-footer">
-      <slot name="footer" />
+      <slot name="footer"></slot>
     </footer>
   </section>
 </template>
 <style lang="scss" scoped>
 .default-container {
   border: 1px solid $background-border;
-  height: 83%;
-  width: 98%;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   border-radius: $background-radius;
@@ -26,6 +26,7 @@
 .default-header {
   display: flex;
   align-items: center;
+  color: $default-text-color;
 }
 
 .default-footer {
