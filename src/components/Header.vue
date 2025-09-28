@@ -2,11 +2,14 @@
 import { useUserStore } from "@/store/modules/user";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { formatTime } from "@/utils/dayjs";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const userStore = useUserStore();
 const currentTime = ref<Date | string>(new Date());
 const handleLogout = () => {
-  console.log("登出");
+  userStore.handleLogout();
+  router.push("/login");
 };
 
 let timer = 0;
