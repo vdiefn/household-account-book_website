@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import "./assets/index.scss";
-// import router from "@/router";
 import { useRouter } from "@/router";
 import App from "./App.vue";
 import ElementPlus from "element-plus";
@@ -35,7 +34,6 @@ library.add(
 const app = createApp(App);
 
 app.use(pinia);
-// app.use(router);
 app.use(useRouter());
 app.use(ElementPlus);
 app.component("font-awesome-icon", FontAwesomeIcon);
