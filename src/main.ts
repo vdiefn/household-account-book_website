@@ -18,6 +18,7 @@ import {
   faMagnifyingGlass,
   faRightFromBracket,
   faCircleUser,
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHouse } from "@fortawesome/free-regular-svg-icons";
 import {} from "@fortawesome/free-brands-svg-icons";
@@ -29,6 +30,7 @@ library.add(
   faMagnifyingGlass,
   faRightFromBracket,
   faCircleUser,
+  faBars,
 );
 
 const app = createApp(App);
