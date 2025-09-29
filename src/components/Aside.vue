@@ -25,12 +25,13 @@ const handleSelect = (name: string) => {
 .aside-container {
   height: 90%;
   background-color: white;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  margin-top: 15%;
 
   .el-menu {
-    margin-top: 1.5rem;
+    margin: auto;
 
     .el-menu-item {
       display: flex;
