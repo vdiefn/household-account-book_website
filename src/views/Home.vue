@@ -18,6 +18,7 @@ import { CanvasRenderer } from "echarts/renderers";
 import type { Summary, BarChartItem } from "@/types/summary";
 import type { Record, RecordQuery } from "@/types/record";
 import type { BarSeriesOption } from "echarts/charts";
+import DefaultContainer from "@/components/DefaultContainer.vue";
 
 type EChartsOption = echarts.ComposeOption<BarSeriesOption>;
 
@@ -199,7 +200,7 @@ onMounted(() => {
         <div ref="barChartRef" style="width: 90%; height: 400px"></div>
       </div>
       <div class="info-wrapper">
-        <el-table :data="data.slice(0, 8)" style="width: 100%">
+        <el-table :data="data.slice(0, 8)">
           <el-table-column prop="date" label="Date" width="180">
             <template #default="{ row }">
               {{ formatDate(row.date) }}
@@ -238,28 +239,42 @@ onMounted(() => {
   grid-template-columns: repeat(4, minmax(150px, 1fr));
   grid-gap: 10px;
 }
+
 .trend-info-wrapper {
   margin: 1rem 0;
   padding: 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-gap: 1rem;
+  border: 1px solid red;
+}
 
-  .chart-wrapper,
-  .info-wrapper {
-    border: 1px solid lightgrey;
-    border-radius: 5px;
-  }
-
-  .chart-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem 0;
-  }
-
-  .info-wrapper {
+@media (min-width: $breakpoint-desktop) {
+  .trend-info-wrapper {
+    margin: 1rem 0;
     padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+    border: 1px solid yellow;
+
+    .chart-wrapper,
+    .info-wrapper {
+      border: 1px solid lightgrey;
+      border-radius: 5px;
+    }
+
+    .chart-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem 0;
+      border: 1px solid red;
+    }
+
+    .info-wrapper {
+      padding: 1rem;
+    }
   }
 }
 </style>
